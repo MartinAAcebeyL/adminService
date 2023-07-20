@@ -1,13 +1,15 @@
 from rest_framework import viewsets, status
-from models import Product
-from serializers import ProductSerializer
+from .serializers import ProductSerializer
 from rest_framework.response import Response
+from .models import Product
+from .producer import publish
 
 
 class ProductViewSet(viewsets.ViewSet):
     def list(self, request):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
+        publish()
         return Response(serializer.data)
 
     def create(self, request):
@@ -18,7 +20,7 @@ class ProductViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     def retrieve(self, request, pk=None):
-        product  = Product.objects.get(pk=pk)
+        product = Product.objects.get(pk=pk)
         serializer = ProductSerializer(product)
         if serializer.is_valid():
             return Response(serializer.data, status=status.HTTP_200_OK)
