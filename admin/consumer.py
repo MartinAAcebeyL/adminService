@@ -16,6 +16,6 @@ def callback(ch, method, properties, body):
 
 
 channel.basic_consume(
-    queue='admin', on_message_callback=callback)
+    queue='admin', on_message_callback=callback, auto_ack=True)
 channel.start_consuming()
 channel.close()
