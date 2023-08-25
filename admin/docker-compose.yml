@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   backend:
+    container_name: backendadminservice
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,6 +12,8 @@ services:
       - .:/app
     depends_on:
       - db
+    networks:
+      - mynetwork
 
   queue:
     build:
@@ -19,6 +22,8 @@ services:
     command: 'python consumer.py'
     depends_on:
       - db
+    networks:
+      - mynetwork
 
   db:
     image: mysql:8.0.33
@@ -30,3 +35,10 @@ services:
       - ./dbdata:/var/lib/mysql
     ports:
       - 33066:3306
+    networks:
+      - mynetwork
+# first create a network with the name mynetwork
+# run: docker network create mynetwork
+networks:
+  mynetwork:
+    external: true
